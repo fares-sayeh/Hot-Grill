@@ -8,6 +8,9 @@ app.use(express.static(__dirname));
 
 app.post("/send", async (req, res) => {
   const { name, email, message } = req.body;
+  app.get("/", (req, res) => {
+  res.send("Hot Grill server is running 🚀");
+});
 
   try {
     const transporter = nodemailer.createTransport({
