@@ -25,7 +25,6 @@ The Hot Grill website is a full-featured digital presence designed to showcase o
 - **Backend**: Node.js with Express.js
 - **Database**: MongoDB
 - **Hosting**: [Your hosting provider]
-- **Payment Processing**: Stripe (for online payments if applicable)
 - **Email Service**: SendGrid or Mailgun
 
 ## Installation
@@ -40,7 +39,7 @@ The Hot Grill website is a full-featured digital presence designed to showcase o
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/hot-grill.git
+   git clone https://github.com/fares-sayeh/Hot-Grill.git
    cd hot-grill
    ```
 
@@ -49,19 +48,12 @@ The Hot Grill website is a full-featured digital presence designed to showcase o
    npm install
    ```
 
-3. **Environment Configuration**
-   Create a `.env` file in the root directory:
-   ```
-   MONGODB_URI=your_database_uri
-   FRONTEND_URL=
-   ```
-
-4. **Start the Development Server**
+3. **Start the Development Server**
    ```bash
    npm run dev
    ```
 
-5. **Access the Website**
+4. **Access the Website**
    Open `http://` in your browser
 
 ## Project Structure
@@ -208,7 +200,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Email**: info@hotgrill.com
 - **Phone**: (555) 123-4567
 - **Website**: www.hotgrill.com
-- **Address**: [Your Restaurant Address]
 
 ## Changelog
 
