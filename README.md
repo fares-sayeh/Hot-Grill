@@ -53,10 +53,7 @@ The Hot Grill website is a full-featured digital presence designed to showcase o
    Create a `.env` file in the root directory:
    ```
    MONGODB_URI=your_database_uri
-   API_PORT=5000
-   FRONTEND_URL=http://localhost:3000
-   STRIPE_KEY=your_stripe_key
-   EMAIL_SERVICE_KEY=your_email_key
+   FRONTEND_URL=
    ```
 
 4. **Start the Development Server**
@@ -65,7 +62,7 @@ The Hot Grill website is a full-featured digital presence designed to showcase o
    ```
 
 5. **Access the Website**
-   Open `http://localhost:3000` in your browser
+   Open `http://` in your browser
 
 ## Project Structure
 
