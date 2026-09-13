@@ -1,0 +1,30 @@
+{
+  "name": "hot-grill-restaurant",
+  "version": "1.0.0",
+  "description": "Hot Grill - Premium Restaurant Website",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Open index.html in your browser'",
+    "dev": "echo 'Open index.html in your browser or use Live Server extension'",
+    "build": "echo 'Static site - no build required'"
+  },
+  "keywords": [
+    "restaurant",
+    "hot-grill",
+    "grilled-cuisine",
+    "fine-dining"
+  ],
+  "author": "Hot Grill Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hot-grill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/hot-grill/issues"
+  },
+  "homepage": "https://hot-grill-restaurant.vercel.app",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
