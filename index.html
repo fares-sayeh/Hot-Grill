@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ImpactHub — 8 billion problem solvers</title>
+<meta name="description" content="ImpactHub is a global platform where people discover real-world problems and take on challenges that create measurable impact." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8D%3C/text%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "framer-motion": "https://esm.sh/framer-motion@11.3.19?deps=react@18.2.0,react-dom@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.383.0?deps=react@18.2.0,react-dom@18.2.0"
+  }
+}
+</script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  :root{
+    --bg-0:#05070d;
+    --bg-1:#0a0e1a;
+    --bg-2:#0f1420;
+    --surface: rgba(255,255,255,0.045);
+    --surface-hover: rgba(255,255,255,0.08);
+    --surface-strong: rgba(255,255,255,0.09);
+    --border: rgba(255,255,255,0.09);
+    --border-strong: rgba(255,255,255,0.16);
+    --text-0:#eef1f6;
+    --text-1:#aab3c5;
+    --text-2:#707a8d;
+    --accent:#00d9a3;
+    --accent-ink:#05130f;
+    --accent-2:#ffb347;
+    --accent-3:#8b7bff;
+    --accent-4:#ff6f6f;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  html.light{
+    --bg-0:#f4f6fb;
+    --bg-1:#ffffff;
+    --bg-2:#eef1f8;
+    --surface: rgba(10,14,26,0.04);
+    --surface-hover: rgba(10,14,26,0.075);
+    --surface-strong: rgba(10,14,26,0.09);
+    --border: rgba(10,14,26,0.09);
+    --border-strong: rgba(10,14,26,0.16);
+    --text-0:#0c1220;
+    --text-1:#4c5568;
+    --text-2:#828db0;
+    --accent:#00a884;
+    --accent-ink:#ffffff;
+    --accent-2:#d9821c;
+    --accent-3:#6857e8;
+    --accent-4:#e14f4f;
+    --shadow: 0 20px 60px -25px rgba(20,25,50,0.25);
+  }
+  *{ scroll-behavior:smooth; }
+  [id]{ scroll-margin-top: 96px; }
+  html,body{ background:var(--bg-0); color:var(--text-0); }
+  body{ font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  .font-display{ font-family:'Space Grotesk',sans-serif; }
+
+  ::selection{ background:var(--accent); color:var(--accent-ink); }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:99px; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+
+  .glass{ background:var(--surface); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--border); }
+  .glass-strong{ background:var(--surface-strong); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid var(--border-strong); }
+
+  .grad-brand{ background:linear-gradient(135deg,var(--accent),var(--accent-3)); }
+  .grad-text{
+    background:linear-gradient(90deg,var(--accent),var(--accent-3) 45%,var(--accent-2) 75%,var(--accent));
+    background-size:280% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shift 10s linear infinite;
+  }
+  @keyframes shift{ 0%{background-position:0% 50%} 100%{background-position:280% 50%} }
+
+  @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-16px) } }
+  .float{ animation:float 7s ease-in-out infinite; }
+  .float-slow{ animation:float 11s ease-in-out infinite; }
+  .float-rev{ animation:float 9s ease-in-out infinite reverse; }
+
+  @keyframes pulseNode{ 0%,100%{ transform:scale(1); opacity:.55 } 50%{ transform:scale(2.2); opacity:0 } }
+  .node-ping::after{
+    content:''; position:absolute; inset:0; border-radius:999px; background:currentColor;
+    animation:pulseNode 2.6s cubic-bezier(.4,0,.6,1) infinite;
+  }
+
+  @keyframes drift{ 0%{ transform:translate(0,0) } 33%{ transform:translate(3%, -4%) } 66%{ transform:translate(-2%, 3%) } 100%{ transform:translate(0,0) } }
+  .blob{ position:absolute; border-radius:9999px; filter:blur(90px); animation:drift 22s ease-in-out infinite; }
+
+  .bg-grid{
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:52px 52px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 90%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 90%);
+  }
+
+  .num-tabular{ font-variant-numeric: tabular-nums; }
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+  }
+</style>
+</head>
+<body class="dark" id="top">
+<div id="root"></div>
+
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { createRoot } from "react-dom/client";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import {
+  Globe2, Menu, X, Sun, Moon, Search, Check, ChevronRight, ChevronDown,
+  MapPin, Users, Gauge, Sparkles, ArrowRight, Droplets, Trees, Recycle,
+  Zap, BookOpen, Building2, HeartPulse, Cpu, HandHeart, Globe, Waves,
+  Trophy, Medal, Flame, Star, Target, TrendingUp, Award, Compass,
+  Layers, ShieldCheck, Rocket, Filter, ArrowUpDown, MousePointerClick,
+  CheckCircle2, Circle, PartyPopper, LogIn,
+} from "lucide-react";
+
+/* ----------------------------- Mock data ------------------------------ */
+
+const CATEGORY_META = {
+  Environment: { icon: Trees, color: "var(--accent)" },
+  Education: { icon: BookOpen, color: "var(--accent-3)" },
+  Health: { icon: HeartPulse, color: "var(--accent-4)" },
+  Technology: { icon: Cpu, color: "var(--accent-2)" },
+  Community: { icon: HandHeart, color: "var(--accent)" },
+};
+
+const DIFFICULTY_META = {
+  Beginner: "var(--accent)",
+  Intermediate: "var(--accent-2)",
+  Advanced: "var(--accent-4)",
+};
+
+const CHALLENGES = [
+  {
+    id: 1, title: "Save Water", emoji: "🌊", category: "Environment",
+    location: "Cape Town, South Africa", lat: -33.93, lon: 18.42,
+    difficulty: "Intermediate", participants: 24800, progress: 68, impact: 8.7,
+    goal: "Cut municipal water waste by 30% through community-led leak detection and greywater reuse.",
+    problem: "Cape Town's aquifers are being drawn down faster than they can recharge, pushing the city toward another severe water shortage.",
+    why: "Nearly 4 billion people already face severe water scarcity for at least one month a year, and a warming climate is shortening the gap between droughts.",
+    stats: [ { label: "People facing water scarcity", value: "4B+" }, { label: "Liters lost to leaks daily", value: "126M" }, { label: "Cities at severe risk", value: "11" } ],
+    steps: [ "Map household leaks with a shared sensor kit", "Install a simple greywater recycling loop", "Log weekly usage to the city dashboard", "Recruit two neighbors into the challenge" ],
+  },
+  {
+    id: 2, title: "Restore Forests", emoji: "🌱", category: "Environment",
+    location: "Amazon Basin, Brazil", lat: -3.47, lon: -62.37,
+    difficulty: "Advanced", participants: 31200, progress: 42, impact: 9.2,
+    goal: "Replant 500,000 native trees across degraded Amazon corridors by 2027.",
+    problem: "Deforestation has stripped more than 17% of the Amazon, pushing parts of the rainforest toward an irreversible tipping point.",
+    why: "The Amazon regulates rainfall for half of South America's agriculture and holds decades of stored carbon emissions.",
+    stats: [ { label: "Trees lost per minute", value: "2,400" }, { label: "Amazon already deforested", value: "17%" }, { label: "Species at risk", value: "10,000+" } ],
+    steps: [ "Sponsor a reforestation plot", "Join a GPS-tracked planting expedition", "Monitor sapling health monthly", "Fund a local ranger patrol" ],
+  },
+  {
+    id: 3, title: "Zero Waste", emoji: "♻️", category: "Environment",
+    location: "Kamikatsu, Japan", lat: 33.93, lon: 134.43,
+    difficulty: "Beginner", participants: 18950, progress: 81, impact: 7.9,
+    goal: "Help 100 towns adopt fine-grained waste sorting to reach zero landfill by 2030.",
+    problem: "Most cities still landfill or incinerate over 70% of household waste that could be composted or recycled.",
+    why: "A handful of towns have already proven zero-waste living works — the barrier is habit and knowledge, not technology.",
+    stats: [ { label: "Global waste sent to landfill", value: "70%" }, { label: "Kamikatsu's landfill rate", value: "20%" }, { label: "Towns piloting the model", value: "46" } ],
+    steps: [ "Audit one week of household waste", "Set up a multi-bin sorting station", "Start a home compost bin", "Share your sorting guide with a neighbor" ],
+  },
+  {
+    id: 4, title: "Clean Energy", emoji: "⚡", category: "Technology",
+    location: "Copenhagen, Denmark", lat: 55.68, lon: 12.57,
+    difficulty: "Intermediate", participants: 27600, progress: 57, impact: 8.4,
+    goal: "Crowdsource 10,000 rooftop solar installs across Northern Europe by 2026.",
+    problem: "Fossil fuels still supply roughly 80% of global energy even though solar is now the cheapest electricity in history.",
+    why: "Every rooftop panel installed cuts a household's footprint and adds resilient capacity to the local grid.",
+    stats: [ { label: "Fossil share of global energy", value: "80%" }, { label: "Solar cost drop since 2010", value: "89%" }, { label: "Homes off clean grids", value: "1.2B" } ],
+    steps: [ "Get a free rooftop solar assessment", "Join a community bulk-purchase group", "Track your kWh offset on the dashboard", "Mentor a neighborhood newcomer" ],
+  },
+  {
+    id: 5, title: "Education for Everyone", emoji: "📚", category: "Education",
+    location: "Nairobi, Kenya", lat: -1.29, lon: 36.82,
+    difficulty: "Beginner", participants: 22300, progress: 63, impact: 8.1,
+    goal: "Deliver 50,000 solar-powered tablets preloaded with offline curricula to rural schools.",
+    problem: "258 million children worldwide are out of school, many due to distance, cost, or a lack of electricity for learning tools.",
+    why: "One extra year of schooling raises a person's future income by roughly 10% and compounds across a lifetime.",
+    stats: [ { label: "Children out of school", value: "258M" }, { label: "Schools without electricity", value: "1 in 4" }, { label: "Income boost per school year", value: "~10%" } ],
+    steps: [ "Refurbish a donated tablet", "Preload the offline curriculum kit", "Deliver and train a local teacher", "Track student progress monthly" ],
+  },
+  {
+    id: 6, title: "Smarter Cities", emoji: "🏙️", category: "Technology",
+    location: "Singapore", lat: 1.35, lon: 103.82,
+    difficulty: "Advanced", participants: 19750, progress: 49, impact: 8.9,
+    goal: "Deploy open-source air and traffic sensors across 200 city blocks.",
+    problem: "Urban air pollution contributes to an estimated 4.2 million premature deaths a year, yet most cities have no block-level data.",
+    why: "Hyperlocal sensor data lets cities redirect traffic, plant trees, and warn residents before air quality turns dangerous.",
+    stats: [ { label: "Deaths linked to urban air pollution", value: "4.2M/yr" }, { label: "Cities with block-level sensors", value: "<5%" }, { label: "Cost of one open sensor node", value: "$40" } ],
+    steps: [ "Assemble an open-source sensor kit", "Mount it at your registered block", "Upload readings to the public map", "Propose a fix using your data" ],
+  },
+  {
+    id: 7, title: "Vaccines for All", emoji: "💉", category: "Health",
+    location: "Dhaka, Bangladesh", lat: 23.81, lon: 90.41,
+    difficulty: "Intermediate", participants: 15200, progress: 71, impact: 8.6,
+    goal: "Close the last-mile cold-chain gap for 2 million unvaccinated children.",
+    problem: "One in five children worldwide still miss basic vaccines, largely due to broken cold-chain logistics in the last mile.",
+    why: "Vaccination remains one of the highest-return public health interventions ever devised, saving millions of lives every year.",
+    stats: [ { label: "Under-vaccinated children", value: "20M/yr" }, { label: "Lives saved by vaccines yearly", value: "4–5M" }, { label: "Cold-chain failure rate", value: "~25%" } ],
+    steps: [ "Train as a last-mile cold-chain volunteer", "Map unreached households in your zone", "Escort a vaccine cooler on delivery day", "Log outcomes to the health registry" ],
+  },
+  {
+    id: 8, title: "Mental Health Access", emoji: "🧠", category: "Health",
+    location: "Melbourne, Australia", lat: -37.81, lon: 144.96,
+    difficulty: "Beginner", participants: 12980, progress: 55, impact: 7.5,
+    goal: "Train 5,000 peer-support listeners in underserved communities.",
+    problem: "Nearly 1 billion people live with a mental health condition, yet most countries have only a couple of mental health workers per 100,000 people.",
+    why: "Peer-support networks catch crises early and ease the load on overwhelmed clinical systems.",
+    stats: [ { label: "People with a mental health condition", value: "970M" }, { label: "Avg. workers per 100k people", value: "2" }, { label: "Countries with no youth service", value: "1 in 3" } ],
+    steps: [ "Complete the peer-listener certification", "Host a weekly community check-in", "Share the local crisis line network", "Log anonymized session outcomes" ],
+  },
+  {
+    id: 9, title: "Code for Good", emoji: "💻", category: "Technology",
+    location: "Bengaluru, India", lat: 12.97, lon: 77.59,
+    difficulty: "Intermediate", participants: 26100, progress: 74, impact: 8.0,
+    goal: "Ship 200 open-source tools for nonprofits with no dev budget.",
+    problem: "Most grassroots nonprofits run on spreadsheets and volunteers' personal laptops because they can't afford custom software.",
+    why: "A single well-built open-source tool can multiply a small nonprofit's capacity without adding headcount.",
+    stats: [ { label: "Nonprofits with no dedicated IT staff", value: "82%" }, { label: "Avg. tech budget per nonprofit", value: "<2%" }, { label: "Tools shipped this year", value: "134" } ],
+    steps: [ "Pick an open nonprofit tech request", "Pair with an NGO on requirements", "Ship an MVP in a two-week sprint", "Hand off docs and a training session" ],
+  },
+  {
+    id: 10, title: "Neighborhood Food Rescue", emoji: "🥖", category: "Community",
+    location: "Mexico City, Mexico", lat: 19.43, lon: -99.13,
+    difficulty: "Beginner", participants: 20450, progress: 66, impact: 7.8,
+    goal: "Redirect 1 million meals worth of surplus food to local shelters.",
+    problem: "A third of all food produced globally is wasted while thousands go hungry within the same city.",
+    why: "Rescuing surplus food is one of the fastest, lowest-cost ways to fight hunger without growing a single extra crop.",
+    stats: [ { label: "Food wasted globally", value: "1 in 3" }, { label: "People facing hunger", value: "735M" }, { label: "Meals rescued this year", value: "410K" } ],
+    steps: [ "Sign up for a rescue route near you", "Pick up surplus from a partner vendor", "Deliver to a registered shelter", "Log the weight rescued in the app" ],
+  },
+  {
+    id: 11, title: "Digital Inclusion", emoji: "🌐", category: "Community",
+    location: "Lagos, Nigeria", lat: 6.52, lon: 3.38,
+    difficulty: "Intermediate", participants: 14300, progress: 38, impact: 7.2,
+    goal: "Get 1 million first-time users online with free digital-literacy kits.",
+    problem: "About 2.6 billion people remain offline, cut off from education, banking, and job markets built around connectivity.",
+    why: "Closing the digital divide is becoming as foundational to opportunity as literacy itself.",
+    stats: [ { label: "People still offline", value: "2.6B" }, { label: "Jobs requiring digital skills", value: "9 in 10" }, { label: "Kits distributed to date", value: "62K" } ],
+    steps: [ "Host a weekend digital-literacy workshop", "Set up a shared community access point", "Pair a first-time user with a mentor", "Track sign-ups on the local ledger" ],
+  },
+  {
+    id: 12, title: "Ocean Plastic Cleanup", emoji: "🐋", category: "Environment",
+    location: "Manila Bay, Philippines", lat: 14.58, lon: 120.98,
+    difficulty: "Advanced", participants: 29800, progress: 59, impact: 9.0,
+    goal: "Pull 3,000 tons of plastic from Southeast Asia's rivers before monsoon season.",
+    problem: "A small number of rivers carry the majority of ocean-bound plastic, and several of the worst run through Southeast Asia's densest coastal cities.",
+    why: "Every ton intercepted upstream is a ton that never fragments into untraceable ocean microplastic.",
+    stats: [ { label: "Plastic entering oceans yearly", value: "8M tons" }, { label: "Share from just 10 rivers", value: "~90%" }, { label: "Tons intercepted this season", value: "1,860" } ],
+    steps: [ "Join a river boom monitoring shift", "Sort and log recovered plastic by type", "Adopt a stretch of riverbank", "Recruit a local fishing crew partner" ],
+  },
+];
+
+const FEATURED_IDS = [1, 2, 3, 4, 5, 6];
+const CATEGORIES = ["Environment", "Education", "Health", "Technology", "Community"];
+
+const LEADERBOARD_USERS = [
+  { rank: 1, name: "Aiko Tanaka", flag: "🇯🇵", country: "Japan", xp: 48200, impact: 9.8, badges: 12 },
+  { rank: 2, name: "Priya Sharma", flag: "🇮🇳", country: "India", xp: 45100, impact: 9.6, badges: 11 },
+  { rank: 3, name: "Lucas Silva", flag: "🇧🇷", country: "Brazil", xp: 43850, impact: 9.4, badges: 10 },
+  { rank: 4, name: "Fatima Al-Sayed", flag: "🇪🇬", country: "Egypt", xp: 41200, impact: 9.1, badges: 9 },
+  { rank: 5, name: "Noah Williams", flag: "🇨🇦", country: "Canada", xp: 39800, impact: 8.9, badges: 9 },
+  { rank: 6, name: "Elena Petrova", flag: "🇵🇱", country: "Poland", xp: 38650, impact: 8.7, badges: 8 },
+  { rank: 7, name: "Kwame Mensah", flag: "🇬🇭", country: "Ghana", xp: 37100, impact: 8.5, badges: 8 },
+];
+
+const LEADERBOARD_COUNTRIES = [
+  { rank: 1, name: "Japan", flag: "🇯🇵", participants: 18420, impact: 8.9 },
+  { rank: 2, name: "India", flag: "🇮🇳", participants: 22100, impact: 8.6 },
+  { rank: 3, name: "Brazil", flag: "🇧🇷", participants: 16800, impact: 8.7 },
+  { rank: 4, name: "Kenya", flag: "🇰🇪", participants: 9200, impact: 8.4 },
+  { rank: 5, name: "Germany", flag: "🇩🇪", participants: 14500, impact: 8.2 },
+  { rank: 6, name: "Canada", flag: "🇨🇦", participants: 11200, impact: 8.1 },
+];
+
+const ACHIEVEMENTS = [
+  { id: 1, name: "First Impact", icon: Sparkles, desc: "Complete your first action", earned: true, progress: 1, total: 1 },
+  { id: 2, name: "Climate Hero", icon: Trees, desc: "Complete 10 environment challenges", earned: true, progress: 10, total: 10 },
+  { id: 3, name: "Community Builder", icon: HandHeart, desc: "Recruit 5 people into a challenge", earned: false, progress: 3, total: 5 },
+  { id: 4, name: "Global Explorer", icon: Compass, desc: "Join challenges in 5 countries", earned: true, progress: 5, total: 5 },
+  { id: 5, name: "100 Actions", icon: Target, desc: "Log 100 completed actions", earned: false, progress: 68, total: 100 },
+  { id: 6, name: "Streak Master", icon: Flame, desc: "Maintain a 30-day streak", earned: false, progress: 14, total: 30 },
+];
+
+const WEEKLY_ACTIONS = [3, 5, 2, 6, 4, 7, 5];
+const WEEK_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
+
+/* ----------------------------- Helpers ------------------------------ */
+
+function cx(...a) { return a.filter(Boolean).join(" "); }
+
+function formatCount(n) {
+  return Math.round(n).toLocaleString("en-US");
+}
+
+function Counter({ value, decimals = 0, suffix = "", prefix = "", duration = 1.8 }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let raf;
+    let start = null;
+    const tick = (ts) => {
+      if (start === null) start = ts;
+      const t = Math.min((ts - start) / (duration * 1000), 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplay(value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, value, duration]);
+
+  return (
+    <span ref={ref} className="num-tabular">
+      {prefix}{display.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}
+    </span>
+  );
+}
+
+function Reveal({ children, delay = 0, className = "", y = 22 }) {
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SectionKicker({ children, icon: Icon }) {
+  return (
+    <div className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-1)]">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-60 node-ping text-[var(--accent)]"></span>
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--accent)]"></span>
+      </span>
+      {children}
+    </div>
+  );
+}
+
+/* ----------------------------- Toasts ------------------------------ */
+
+function ToastStack({ toasts, remove }) {
+  return (
+    <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm">
+      <AnimatePresence>
+        {toasts.map((t) => (
+          <motion.div
+            key={t.id}
+            layout
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 60, transition: { duration: 0.2 } }}
+            className="glass-strong rounded-2xl px-4 py-3.5 shadow-2xl flex items-start gap-3"
+            style={{ boxShadow: "var(--shadow)" }}
+          >
+            <span className="text-xl leading-none mt-0.5">{t.emoji}</span>
+            <div className="flex-1 text-sm text-[var(--text-0)] font-medium">{t.message}</div>
+            <button onClick={() => remove(t.id)} aria-label="Dismiss" className="text-[var(--text-2)] hover:text-[var(--text-0)]">
+              <X className="h-4 w-4" />
+            </button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ----------------------------- Navbar ------------------------------ */
+
+function Navbar({ theme, onToggleTheme, joined, onJoinClick }) {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const links = [
+    { id: "challenges", label: "Challenges" },
+    { id: "explore", label: "Explore" },
+    { id: "leaderboard", label: "Leaderboard" },
+    { id: "dashboard", label: "My Impact" },
+    { id: "about", label: "About" },
+  ];
+
+  const go = (id) => {
+    setOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <header className="fixed top-0 inset-x-0 z-50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className={cx("mt-3 flex items-center justify-between rounded-2xl px-4 py-3 transition-shadow glass", scrolled && "shadow-xl")} style={scrolled ? { boxShadow: "var(--shadow)" } : {}}>
+          <button onClick={() => go("top")} className="flex items-center gap-2.5" aria-label="ImpactHub, back to top">
+            <span className="grid h-8 w-8 place-items-center rounded-xl grad-brand">
+              <Globe2 className="h-4 w-4" style={{ color: "var(--accent-ink)" }} strokeWidth={2.4} />
+            </span>
+            <span className="font-display text-lg font-semibold tracking-tight">ImpactHub</span>
+          </button>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {links.map((l) => (
+              <button
+                key={l.id}
+                onClick={() => go(l.id)}
+                className="rounded-lg px-3.5 py-2 text-sm font-medium text-[var(--text-1)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-0)]"
+              >
+                {l.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onToggleTheme}
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              className="grid h-9 w-9 place-items-center rounded-full glass transition-colors hover:bg-[var(--surface-hover)]"
+            >
+              {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </button>
+            <button
+              onClick={onJoinClick}
+              className={cx(
+                "hidden sm:inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition hover:brightness-110",
+                joined ? "glass text-[var(--text-0)]" : "grad-brand"
+              )}
+              style={!joined ? { color: "var(--accent-ink)" } : {}}
+            >
+              {joined ? (<><Check className="h-3.5 w-3.5" /> Joined</>) : "Join"}
+            </button>
+            <button onClick={() => setOpen((v) => !v)} className="grid h-9 w-9 place-items-center rounded-full glass md:hidden" aria-label="Toggle menu">
+              {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden md:hidden"
+            >
+              <div className="mt-2 flex flex-col gap-1 rounded-2xl glass p-2">
+                {links.map((l) => (
+                  <button key={l.id} onClick={() => go(l.id)} className="rounded-xl px-4 py-3 text-left text-sm font-medium text-[var(--text-1)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-0)]">
+                    {l.label}
+                  </button>
+                ))}
+                <button onClick={onJoinClick} className="mt-1 rounded-xl px-4 py-3 text-sm font-semibold grad-brand" style={{ color: "var(--accent-ink)" }}>
+                  {joined ? "Joined ✓" : "Join ImpactHub"}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </header>
+  );
+}
+
+/* ----------------------------- World Map ------------------------------ */
+
+function useContinentDots() {
+  return useMemo(() => {
+    const blobs = [
+      { cx: 22.2, cy: 12.5, rx: 9.7, ry: 6.9, n: 130 },
+      { cx: 38.3, cy: 5.0, rx: 2.8, ry: 2.2, n: 14 },
+      { cx: 33.3, cy: 29.2, rx: 5.6, ry: 9.7, n: 100 },
+      { cx: 54.2, cy: 11.1, rx: 5.0, ry: 4.2, n: 55 },
+      { cx: 55.6, cy: 25.0, rx: 6.9, ry: 10.6, n: 120 },
+      { cx: 75.0, cy: 12.5, rx: 12.5, ry: 6.9, n: 150 },
+      { cx: 73.6, cy: 20.8, rx: 5.6, ry: 4.2, n: 65 },
+      { cx: 87.5, cy: 31.9, rx: 4.2, ry: 2.8, n: 40 },
+    ];
+    const pts = [];
+    blobs.forEach((b, bi) => {
+      let placed = 0, attempts = 0;
+      while (placed < b.n && attempts < b.n * 8) {
+        attempts++;
+        const dx = Math.random() * 2 - 1;
+        const dy = Math.random() * 2 - 1;
+        if (dx * dx + dy * dy <= 1) {
+          pts.push({ x: b.cx + dx * b.rx, y: b.cy + dy * b.ry, r: Math.random() * 0.28 + 0.24, o: Math.random() * 0.35 + 0.18, key: bi + "-" + placed });
+          placed++;
+        }
+      }
+    });
+    return pts;
+  }, []);
+}
+
+function lonLatToXY(lon, lat) {
+  return { x: ((lon + 180) / 360) * 100, y: ((90 - lat) / 180) * 50 };
+}
+
+function WorldMap({ challenges, onPick, hoveredId, setHoveredId }) {
+  const dots = useContinentDots();
+  const arcs = [
+    [0, 3], [1, 5], [4, 8], [2, 9], [6, 11],
+  ];
+
+  return (
+    <div className="relative w-full">
+      <svg viewBox="0 0 100 50" className="w-full h-auto overflow-visible" role="img" aria-label="World map showing active challenge locations">
+        {dots.map((p) => (
+          <circle key={p.key} cx={p.x} cy={p.y} r={p.r} fill="var(--text-2)" opacity={p.o} />
+        ))}
+
+        {arcs.map(([a, b], i) => {
+          const p1 = lonLatToXY(challenges[a].lon, challenges[a].lat);
+          const p2 = lonLatToXY(challenges[b].lon, challenges[b].lat);
+          const mx = (p1.x + p2.x) / 2;
+          const my = Math.min(p1.y, p2.y) - 8;
+          const d = "M " + p1.x + " " + p1.y + " Q " + mx + " " + my + " " + p2.x + " " + p2.y;
+          return (
+            <motion.path
+              key={i}
+              d={d}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="0.18"
+              vectorEffect="non-scaling-stroke"
+              opacity="0.45"
+              initial={{ pathLength: 0, opacity: 0 }}
+              whileInView={{ pathLength: 1, opacity: 0.45 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.8, delay: i * 0.25, ease: "easeInOut" }}
+            />
+          );
+        })}
+
+        {challenges.map((c) => {
+          const { x, y } = lonLatToXY(c.lon, c.lat);
+          const active = hoveredId === c.id;
+          return (
+            <g key={c.id} transform={"translate(" + x + "," + y + ")"} style={{ cursor: "pointer" }}
+               onMouseEnter={() => setHoveredId(c.id)} onMouseLeave={() => setHoveredId(null)}
+               onClick={() => onPick(c)}>
+              <circle r="2.6" fill="var(--accent)" opacity="0.18" className="node-ping" style={{ color: "var(--accent)" }} />
+              <circle r={active ? 1.3 : 1.0} fill="var(--accent)" stroke="var(--bg-0)" strokeWidth="0.25" vectorEffect="non-scaling-stroke" />
+            </g>
+          );
+        })}
+      </svg>
+
+      <AnimatePresence>
+        {hoveredId && (() => {
+          const c = challenges.find((x) => x.id === hoveredId);
+          if (!c) return null;
+          const { x, y } = lonLatToXY(c.lon, c.lat);
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 6, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full glass-strong rounded-xl px-3 py-2 text-xs whitespace-nowrap"
+              style={{ left: x + "%", top: (y / 50) * 100 - 3 + "%", boxShadow: "var(--shadow)" }}
+            >
+              <div className="font-semibold text-[var(--text-0)]">{c.emoji} {c.title}</div>
+              <div className="text-[var(--text-1)]">{c.location}</div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ----------------------------- Hero ------------------------------ */
+
+function Hero({ onExplore, onStart, challenges, onPickChallenge, hoveredId, setHoveredId }) {
+  return (
+    <section className="relative overflow-hidden pt-36 pb-20 sm:pt-44 sm:pb-28">
+      <div className="pointer-events-none absolute inset-0 bg-grid" />
+      <div className="blob float-slow h-72 w-72 -top-10 -left-10" style={{ background: "var(--accent)", opacity: 0.18 }} />
+      <div className="blob float h-80 w-80 top-1/3 -right-16" style={{ background: "var(--accent-3)", opacity: 0.16 }} />
+      <div className="blob float-rev h-64 w-64 bottom-0 left-1/4" style={{ background: "var(--accent-2)", opacity: 0.1 }} />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr,0.95fr]">
+          <div>
+            <Reveal>
+              <SectionKicker>184,392 people already taking action</SectionKicker>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+                <span className="block text-[var(--text-0)]">The world has 8 billion people.</span>
+                <span className="grad-text block mt-1">What if we turned them into 8 billion problem solvers?</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p className="mt-6 max-w-lg text-lg text-[var(--text-1)]">
+                Discover challenges. Take action. Create measurable impact.
+              </p>
+            </Reveal>
+            <Reveal delay={0.24} className="mt-9 flex flex-wrap items-center gap-3">
+              <button
+                onClick={onExplore}
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition hover:brightness-110 active:scale-[0.98] grad-brand"
+                style={{ color: "var(--accent-ink)" }}
+              >
+                Explore Challenges <ChevronRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={onStart}
+                className="inline-flex items-center gap-2 rounded-full glass px-6 py-3.5 text-sm font-semibold text-[var(--text-0)] transition hover:bg-[var(--surface-hover)] active:scale-[0.98]"
+              >
+                Start Making Impact
+              </button>
+            </Reveal>
+
+            <Reveal delay={0.34} className="mt-12 flex flex-wrap gap-8">
+              {[
+                ["87", "countries"],
+                ["1,248", "live challenges"],
+                ["2.4M", "actions logged"],
+              ].map(([n, l]) => (
+                <div key={l}>
+                  <div className="font-display text-2xl font-semibold text-[var(--text-0)]">{n}</div>
+                  <div className="text-sm text-[var(--text-2)]">{l}</div>
+                </div>
+              ))}
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.2} y={30}>
+            <div className="relative rounded-3xl glass-strong p-4 sm:p-6" style={{ boxShadow: "var(--shadow)" }}>
+              <div className="flex items-center justify-between px-2 pb-4">
+                <span className="text-sm font-medium text-[var(--text-1)]">Live challenge map</span>
+                <span className="flex items-center gap-1.5 text-xs text-[var(--text-2)]">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--accent)" }} /> Updating live
+                </span>
+              </div>
+              <WorldMap challenges={challenges} onPick={onPickChallenge} hoveredId={hoveredId} setHoveredId={setHoveredId} />
+              <div className="mt-4 flex items-center justify-between px-2 text-xs text-[var(--text-2)]">
+                <span>Tap a node to open a challenge</span>
+                <span className="hidden sm:inline">{challenges.length} featured locations</span>
+              </div>
+            </div>
+            <div className="float absolute -bottom-5 -left-5 hidden sm:block rounded-2xl glass-strong px-4 py-3" style={{ boxShadow: "var(--shadow)" }}>
+              <div className="text-xs text-[var(--text-2)]">This week</div>
+              <div className="font-display text-lg font-semibold">+18,204 actions</div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Stats ------------------------------ */
+
+function StatsSection() {
+  const stats = [
+    { icon: Users, value: 184392, label: "Participants worldwide", decimals: 0, suffix: "" },
+    { icon: Layers, value: 1248, label: "Active challenges", decimals: 0, suffix: "" },
+    { icon: Globe, value: 87, label: "Countries represented", decimals: 0, suffix: "" },
+    { icon: TrendingUp, value: 2.4, label: "Actions completed", decimals: 1, suffix: "M" },
+  ];
+  return (
+    <section className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionKicker>Global impact</SectionKicker>
+          <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            Small local actions, aggregated into something planetary.
+          </h2>
+        </Reveal>
+
+        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-[var(--border)] lg:grid-cols-4">
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08} className="bg-[var(--bg-0)] p-6 sm:p-8">
+              <s.icon className="h-5 w-5" style={{ color: "var(--accent)" }} />
+              <div className="mt-5 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                <Counter value={s.value} decimals={s.decimals} suffix={s.suffix} />
+              </div>
+              <div className="mt-1.5 text-sm text-[var(--text-1)]">{s.label}</div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Challenge Card ------------------------------ */
+
+function ChallengeCard({ c, onOpen, joined, big = false }) {
+  const meta = CATEGORY_META[c.category];
+  return (
+    <motion.button
+      onClick={() => onOpen(c)}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.25 }}
+      className={cx(
+        "group relative flex flex-col overflow-hidden rounded-3xl glass p-6 text-left transition-colors hover:bg-[var(--surface-hover)]",
+        big ? "sm:p-8" : ""
+      )}
+    >
+      <div className="flex items-start justify-between">
+        <span className={cx("grid place-items-center rounded-2xl", big ? "h-14 w-14 text-2xl" : "h-11 w-11 text-lg")} style={{ background: "var(--surface-strong)" }}>
+          {c.emoji}
+        </span>
+        {joined && (
+          <span className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold" style={{ background: "var(--surface-strong)", color: "var(--accent)" }}>
+            <Check className="h-3 w-3" /> Joined
+          </span>
+        )}
+      </div>
+
+      <h3 className={cx("mt-5 font-display font-semibold tracking-tight text-[var(--text-0)]", big ? "text-2xl" : "text-lg")}>{c.title}</h3>
+
+      <div className="mt-2 flex items-center gap-1.5 text-sm text-[var(--text-1)]">
+        <MapPin className="h-3.5 w-3.5 shrink-0" /> {c.location}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[var(--text-2)]">
+        <span className="inline-flex items-center gap-1.5">
+          <Gauge className="h-3.5 w-3.5" style={{ color: DIFFICULTY_META[c.difficulty] }} /> {c.difficulty}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Users className="h-3.5 w-3.5" /> {formatCount(c.participants)}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Star className="h-3.5 w-3.5" /> {c.impact.toFixed(1)} impact
+        </span>
+      </div>
+
+      <div className="mt-5">
+        <div className="flex items-center justify-between text-xs text-[var(--text-2)]">
+          <span>Progress toward goal</span>
+          <span className="num-tabular">{c.progress}%</span>
+        </div>
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--surface-strong)" }}>
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-3))" }}
+            initial={{ width: 0 }}
+            whileInView={{ width: c.progress + "%" }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium" style={{ color: meta.color }}>
+          <meta.icon className="h-3.5 w-3.5" /> {c.category}
+        </span>
+        <span className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-0)] transition-transform group-hover:translate-x-0.5">
+          View challenge <ChevronRight className="h-4 w-4" />
+        </span>
+      </div>
+    </motion.button>
+  );
+}
+
+/* ----------------------------- Trending ------------------------------ */
+
+function TrendingSection({ challenges, onOpen, joinedIds }) {
+  const featured = FEATURED_IDS.map((id) => challenges.find((c) => c.id === id));
+  return (
+    <section id="challenges" className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <SectionKicker>Trending challenges</SectionKicker>
+            <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              Six problems the world is rallying around right now.
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal delay={0} className="sm:col-span-2 lg:row-span-2">
+            <ChallengeCard c={featured[0]} onOpen={onOpen} joined={joinedIds.has(featured[0].id)} big />
+          </Reveal>
+          {featured.slice(1, 4).map((c, i) => (
+            <Reveal key={c.id} delay={0.08 * (i + 1)}>
+              <ChallengeCard c={c} onOpen={onOpen} joined={joinedIds.has(c.id)} />
+            </Reveal>
+          ))}
+          {featured.slice(4).map((c, i) => (
+            <Reveal key={c.id} delay={0.08 * (i + 4)} className="sm:col-span-1">
+              <ChallengeCard c={c} onOpen={onOpen} joined={joinedIds.has(c.id)} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Explorer ------------------------------ */
+
+const SORTS = ["Most popular", "Highest impact", "Almost there", "Newest"];
+
+function Explorer({ challenges, onOpen, joinedIds }) {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
+  const [sort, setSort] = useState("Most popular");
+  const [sortOpen, setSortOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    let list = challenges.filter((c) => {
+      const matchesCat = category === "All" || c.category === category;
+      const q = query.trim().toLowerCase();
+      const matchesQuery = !q || c.title.toLowerCase().includes(q) || c.location.toLowerCase().includes(q);
+      return matchesCat && matchesQuery;
+    });
+    if (sort === "Most popular") list = [...list].sort((a, b) => b.participants - a.participants);
+    if (sort === "Highest impact") list = [...list].sort((a, b) => b.impact - a.impact);
+    if (sort === "Almost there") list = [...list].sort((a, b) => b.progress - a.progress);
+    if (sort === "Newest") list = [...list].sort((a, b) => b.id - a.id);
+    return list;
+  }, [challenges, query, category, sort]);
+
+  return (
+    <section id="explore" className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionKicker>Challenge explorer</SectionKicker>
+          <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            Filter by cause, search by place, sort by what matters to you.
+          </h2>
+        </Reveal>
+
+        <Reveal delay={0.1} className="mt-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-sm">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-2)]" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search challenges or locations"
+              className="w-full rounded-full glass py-3 pl-11 pr-4 text-sm text-[var(--text-0)] placeholder:text-[var(--text-2)] focus:bg-[var(--surface-hover)]"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap gap-2">
+              {["All", ...CATEGORIES].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={cx(
+                    "rounded-full px-3.5 py-2 text-xs font-medium transition-colors",
+                    category === cat ? "grad-brand" : "glass text-[var(--text-1)] hover:bg-[var(--surface-hover)]"
+                  )}
+                  style={category === cat ? { color: "var(--accent-ink)" } : {}}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative">
+              <button
+                onClick={() => setSortOpen((v) => !v)}
+                className="inline-flex items-center gap-2 rounded-full glass px-3.5 py-2 text-xs font-medium text-[var(--text-1)] hover:bg-[var(--surface-hover)]"
+              >
+                <ArrowUpDown className="h-3.5 w-3.5" /> {sort} <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+              <AnimatePresence>
+                {sortOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-2xl glass-strong p-1.5"
+                    style={{ boxShadow: "var(--shadow)" }}
+                  >
+                    {SORTS.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => { setSort(s); setSortOpen(false); }}
+                        className="block w-full rounded-xl px-3 py-2 text-left text-xs font-medium text-[var(--text-1)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-0)]"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-4 text-sm text-[var(--text-2)]">
+          {filtered.length} challenge{filtered.length === 1 ? "" : "s"} found
+        </div>
+
+        <motion.div layout className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((c) => (
+              <motion.div
+                key={c.id}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ChallengeCard c={c} onOpen={onOpen} joined={joinedIds.has(c.id)} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+
+        {filtered.length === 0 && (
+          <div className="mt-16 flex flex-col items-center gap-3 text-center">
+            <Filter className="h-6 w-6 text-[var(--text-2)]" />
+            <p className="text-[var(--text-1)]">No challenges match that search. Try a different keyword or category.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Modal ------------------------------ */
+
+function ChallengeModal({ challenge, onClose, joined, onJoin }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [onClose]);
+
+  if (!challenge) return null;
+  const meta = CATEGORY_META[challenge.category];
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[90] flex items-end justify-center p-0 sm:items-center sm:p-6"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    >
+      <motion.div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      />
+      <motion.div
+        role="dialog" aria-modal="true" aria-label={challenge.title + " challenge details"}
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl glass-strong sm:rounded-3xl"
+        style={{ background: "var(--bg-1)", boxShadow: "var(--shadow)" }}
+      >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] px-6 py-4" style={{ background: "var(--bg-1)" }}>
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium" style={{ color: meta.color }}>
+            <meta.icon className="h-3.5 w-3.5" /> {challenge.category}
+          </span>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full glass hover:bg-[var(--surface-hover)]">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="px-6 py-6 sm:px-8 sm:py-8">
+          <div className="flex items-start gap-4">
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-2xl" style={{ background: "var(--surface-strong)" }}>{challenge.emoji}</span>
+            <div>
+              <h3 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{challenge.title}</h3>
+              <div className="mt-1.5 flex items-center gap-1.5 text-sm text-[var(--text-1)]"><MapPin className="h-3.5 w-3.5" /> {challenge.location}</div>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            {[
+              ["Difficulty", challenge.difficulty],
+              ["Participants", formatCount(challenge.participants)],
+              ["Impact score", challenge.impact.toFixed(1)],
+            ].map(([l, v]) => (
+              <div key={l} className="rounded-2xl glass p-3.5 text-center sm:p-4">
+                <div className="font-display text-lg font-semibold sm:text-xl">{v}</div>
+                <div className="mt-0.5 text-xs text-[var(--text-2)]">{l}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-[var(--text-0)]">Goal</span>
+              <span className="num-tabular text-[var(--text-2)]">{challenge.progress}% funded</span>
+            </div>
+            <p className="mt-1.5 text-sm text-[var(--text-1)]">{challenge.goal}</p>
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--surface-strong)" }}>
+              <motion.div className="h-full rounded-full" style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-3))" }}
+                initial={{ width: 0 }} animate={{ width: challenge.progress + "%" }} transition={{ duration: 1, ease: "easeOut" }} />
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-8 sm:grid-cols-2">
+            <div>
+              <h4 className="font-display text-base font-semibold">The problem</h4>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">{challenge.problem}</p>
+            </div>
+            <div>
+              <h4 className="font-display text-base font-semibold">Why it matters</h4>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">{challenge.why}</p>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h4 className="font-display text-base font-semibold">Global picture</h4>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {challenge.stats.map((s) => (
+                <div key={s.label} className="rounded-2xl glass p-4">
+                  <div className="font-display text-xl font-semibold" style={{ color: meta.color }}>{s.value}</div>
+                  <div className="mt-1 text-xs text-[var(--text-2)]">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h4 className="font-display text-base font-semibold">Your action steps</h4>
+            <ul className="mt-3 space-y-2.5">
+              {challenge.steps.map((s, i) => (
+                <li key={i} className="flex items-start gap-3 rounded-2xl glass p-3.5 text-sm text-[var(--text-1)]">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[11px] font-semibold" style={{ background: "var(--surface-strong)", color: "var(--text-0)" }}>{i + 1}</span>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-9 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-[var(--text-2)]">
+              <Users className="mr-1 inline h-3.5 w-3.5" /> {formatCount(challenge.participants)} people are already on this
+            </div>
+            <button
+              onClick={() => onJoin(challenge)}
+              disabled={joined}
+              className={cx(
+                "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition hover:brightness-110 active:scale-[0.98]",
+                joined ? "glass text-[var(--text-1)]" : "grad-brand"
+              )}
+              style={!joined ? { color: "var(--accent-ink)" } : {}}
+            >
+              {joined ? (<><Check className="h-4 w-4" /> You're on this challenge</>) : (<>Join Challenge <ArrowRight className="h-4 w-4" /></>)}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ----------------------------- Leaderboard ------------------------------ */
+
+function Avatar({ name, size = 10 }) {
+  const initials = name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+  const colors = ["var(--accent)", "var(--accent-3)", "var(--accent-2)", "var(--accent-4)"];
+  const color = colors[name.length % colors.length];
+  return (
+    <span
+      className={cx("grid shrink-0 place-items-center rounded-full font-display text-xs font-semibold", `h-${size} w-${size}`)}
+      style={{ background: "var(--surface-strong)", color, height: size * 4 + "px", width: size * 4 + "px" }}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function LeaderboardSection() {
+  const [tab, setTab] = useState("users");
+  const data = tab === "users" ? LEADERBOARD_USERS : LEADERBOARD_COUNTRIES;
+
+  return (
+    <section id="leaderboard" className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <SectionKicker>Global leaderboard</SectionKicker>
+            <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              The people and countries leading the way.
+            </h2>
+          </div>
+          <div className="flex gap-1 rounded-full glass p-1">
+            {[["users", "Participants"], ["countries", "Countries"]].map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={cx("rounded-full px-4 py-2 text-sm font-medium transition-colors", tab === key ? "grad-brand" : "text-[var(--text-1)] hover:text-[var(--text-0)]")}
+                style={tab === key ? { color: "var(--accent-ink)" } : {}}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </Reveal>
+
+        <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
+          {data.slice(0, 3).map((d, i) => (
+            <Reveal key={d.rank} delay={i * 0.08}>
+              <div className={cx("relative overflow-hidden rounded-3xl p-6", i === 0 ? "glass-strong" : "glass")}>
+                {i === 0 && <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl" style={{ background: "var(--accent)", opacity: 0.35 }} />}
+                <div className="flex items-center justify-between">
+                  <Medal className="h-5 w-5" style={{ color: i === 0 ? "var(--accent-2)" : "var(--text-2)" }} />
+                  <span className="font-display text-2xl font-semibold text-[var(--text-2)]">#{d.rank}</span>
+                </div>
+                <div className="mt-5 flex items-center gap-3">
+                  {tab === "users" ? <Avatar name={d.name} /> : <span className="text-3xl">{d.flag}</span>}
+                  <div>
+                    <div className="font-display text-lg font-semibold">{tab === "users" ? d.name : d.name}</div>
+                    <div className="text-xs text-[var(--text-2)]">{tab === "users" ? d.country + " " + d.flag : formatCount(d.participants) + " participants"}</div>
+                  </div>
+                </div>
+                <div className="mt-5 flex items-center justify-between text-sm">
+                  <span className="text-[var(--text-1)]">{tab === "users" ? "XP" : "Avg. impact"}</span>
+                  <span className="num-tabular font-semibold">{tab === "users" ? formatCount(d.xp) : d.impact.toFixed(1)}</span>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={0.15} className="mt-4 overflow-hidden rounded-3xl glass">
+          <div className="divide-y divide-[var(--border)]">
+            {data.slice(3).map((d) => (
+              <div key={d.rank} className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--surface-hover)] sm:px-6">
+                <span className="w-6 shrink-0 font-display text-sm text-[var(--text-2)]">#{d.rank}</span>
+                {tab === "users" ? <Avatar name={d.name} size={9} /> : <span className="w-9 shrink-0 text-xl">{d.flag}</span>}
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-[var(--text-0)]">{d.name}</div>
+                  <div className="truncate text-xs text-[var(--text-2)]">{tab === "users" ? d.country : formatCount(d.participants) + " participants"}</div>
+                </div>
+                {tab === "users" && (
+                  <span className="hidden items-center gap-1 text-xs text-[var(--text-2)] sm:flex"><Award className="h-3.5 w-3.5" /> {d.badges}</span>
+                )}
+                <span className="num-tabular text-sm font-semibold text-[var(--text-0)]">{tab === "users" ? formatCount(d.xp) + " XP" : d.impact.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Achievements ------------------------------ */
+
+function AchievementBadge({ a, delay }) {
+  const pct = Math.round((a.progress / a.total) * 100);
+  const r = 30;
+  const c = 2 * Math.PI * r;
+  return (
+    <Reveal delay={delay} className="flex flex-col items-center rounded-3xl glass p-6 text-center">
+      <div className="relative grid h-20 w-20 place-items-center">
+        <svg viewBox="0 0 70 70" className="absolute inset-0 -rotate-90">
+          <circle cx="35" cy="35" r={r} fill="none" stroke="var(--surface-strong)" strokeWidth="4" />
+          <motion.circle
+            cx="35" cy="35" r={r} fill="none"
+            stroke={a.earned ? "var(--accent)" : "var(--accent-3)"} strokeWidth="4" strokeLinecap="round"
+            strokeDasharray={c}
+            initial={{ strokeDashoffset: c }}
+            whileInView={{ strokeDashoffset: c - (c * pct) / 100 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: "easeOut", delay }}
+          />
+        </svg>
+        <span className={cx("grid h-12 w-12 place-items-center rounded-full", a.earned ? "grad-brand" : "")} style={!a.earned ? { background: "var(--surface-strong)" } : {}}>
+          <a.icon className="h-5 w-5" style={{ color: a.earned ? "var(--accent-ink)" : "var(--text-2)" }} />
+        </span>
+      </div>
+      <div className="mt-4 font-display text-base font-semibold">{a.name}</div>
+      <p className="mt-1 text-xs text-[var(--text-2)]">{a.desc}</p>
+      <div className="mt-3 text-xs font-medium num-tabular" style={{ color: a.earned ? "var(--accent)" : "var(--text-2)" }}>
+        {a.earned ? "Unlocked" : a.progress + " / " + a.total}
+      </div>
+    </Reveal>
+  );
+}
+
+function AchievementsSection() {
+  return (
+    <section className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionKicker>Achievements</SectionKicker>
+          <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            Milestones that mark real, cumulative impact.
+          </h2>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {ACHIEVEMENTS.map((a, i) => <AchievementBadge key={a.id} a={a} delay={i * 0.07} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Dashboard ------------------------------ */
+
+function RadialScore({ value, max = 10 }) {
+  const r = 54, c = 2 * Math.PI * r;
+  const pct = value / max;
+  return (
+    <div className="relative grid h-36 w-36 place-items-center">
+      <svg viewBox="0 0 120 120" className="absolute inset-0 -rotate-90">
+        <circle cx="60" cy="60" r={r} fill="none" stroke="var(--surface-strong)" strokeWidth="8" />
+        <motion.circle
+          cx="60" cy="60" r={r} fill="none" stroke="var(--accent)" strokeWidth="8" strokeLinecap="round"
+          strokeDasharray={c}
+          initial={{ strokeDashoffset: c }}
+          whileInView={{ strokeDashoffset: c - c * pct }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="text-center">
+        <div className="font-display text-3xl font-semibold"><Counter value={value} decimals={1} /></div>
+        <div className="text-xs text-[var(--text-2)]">of {max}</div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardSection({ userName }) {
+  const maxAction = Math.max(...WEEKLY_ACTIONS);
+  const stats = [
+    { icon: Trophy, label: "Challenges completed", value: 7 },
+    { icon: CheckCircle2, label: "Actions completed", value: 68 },
+    { icon: Rocket, label: "Total XP", value: 12480 },
+    { icon: Globe, label: "Countries impacted", value: 5 },
+  ];
+
+  return (
+    <section id="dashboard" className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionKicker>My impact</SectionKicker>
+          <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            Welcome back, {userName}. Here's what you've set in motion.
+          </h2>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <Reveal className="flex flex-col items-center justify-center gap-4 rounded-3xl glass-strong p-8 text-center lg:col-span-1">
+            <span className="text-sm font-medium text-[var(--text-1)]">Impact score</span>
+            <RadialScore value={6.2} />
+            <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ background: "var(--surface-strong)", color: "var(--accent)" }}>
+              Changemaker · Level 8
+            </span>
+          </Reveal>
+
+          <Reveal delay={0.08} className="rounded-3xl glass p-6 lg:col-span-2 sm:p-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-medium text-[var(--text-1)]">
+                <Flame className="h-4 w-4" style={{ color: "var(--accent-2)" }} /> Current streak
+              </div>
+              <span className="font-display text-2xl font-semibold">14 days</span>
+            </div>
+            <div className="mt-6 flex items-end justify-between gap-2">
+              {WEEKLY_ACTIONS.map((v, i) => (
+                <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                  <div className="flex h-24 w-full items-end overflow-hidden rounded-lg" style={{ background: "var(--surface-strong)" }}>
+                    <motion.div
+                      className="w-full rounded-lg"
+                      style={{ background: "linear-gradient(180deg, var(--accent), var(--accent-3))" }}
+                      initial={{ height: 0 }}
+                      whileInView={{ height: (v / maxAction) * 100 + "%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, delay: i * 0.07, ease: "easeOut" }}
+                    />
+                  </div>
+                  <span className="text-xs text-[var(--text-2)]">{WEEK_LABELS[i]}</span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={0.1 + i * 0.05} className="rounded-3xl glass p-6">
+              <s.icon className="h-5 w-5" style={{ color: "var(--accent)" }} />
+              <div className="mt-4 font-display text-2xl font-semibold"><Counter value={s.value} /></div>
+              <div className="mt-1 text-sm text-[var(--text-1)]">{s.label}</div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- About ------------------------------ */
+
+function AboutSection() {
+  const steps = [
+    { icon: Compass, title: "Discover", body: "Browse real problems sourced from communities, researchers, and local organizers across 87 countries." },
+    { icon: MousePointerClick, title: "Act", body: "Join a challenge, follow its action steps, and log the small, concrete things you actually do." },
+    { icon: ShieldCheck, title: "Measure", body: "Every logged action rolls up into a transparent, shared measure of progress toward the challenge's goal." },
+  ];
+  return (
+    <section id="about" className="relative py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionKicker>How ImpactHub works</SectionKicker>
+          <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            A simple loop, repeated by hundreds of thousands of people.
+          </h2>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <Reveal key={s.title} delay={i * 0.1} className="relative rounded-3xl glass p-7">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl" style={{ background: "var(--surface-strong)" }}>
+                <s.icon className="h-5 w-5" style={{ color: "var(--accent)" }} />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold">{i + 1}. {s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">{s.body}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Final CTA ------------------------------ */
+
+function FinalCTA({ onStart }) {
+  return (
+    <section className="relative overflow-hidden py-24 sm:py-32">
+      <div className="blob h-96 w-96 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ background: "var(--accent)", opacity: 0.16 }} />
+      <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+        <Reveal>
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
+            Your next action could change something.
+          </h2>
+        </Reveal>
+        <Reveal delay={0.1} className="mt-9">
+          <button
+            onClick={onStart}
+            className="inline-flex items-center gap-2 rounded-full px-7 py-4 text-sm font-semibold transition hover:brightness-110 active:scale-[0.98] grad-brand sm:text-base"
+            style={{ color: "var(--accent-ink)" }}
+          >
+            Start Making Impact <ArrowRight className="h-4 w-4" />
+          </button>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Footer ------------------------------ */
+
+function Footer() {
+  return (
+    <footer className="relative border-t border-[var(--border)] py-10">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2.5">
+          <span className="grid h-7 w-7 place-items-center rounded-lg grad-brand">
+            <Globe2 className="h-3.5 w-3.5" style={{ color: "var(--accent-ink)" }} />
+          </span>
+          <span className="font-display text-sm font-semibold">ImpactHub</span>
+        </div>
+        <p className="text-xs text-[var(--text-2)]">Built for a global hackathon · mock data, real ambition</p>
+        <div className="flex gap-4 text-xs text-[var(--text-2)]">
+          <span>Privacy</span><span>Terms</span><span>Contact</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ----------------------------- Join Modal ------------------------------ */
+
+function JoinModal({ onClose, onSubmit }) {
+  const [name, setName] = useState("");
+  const [picked, setPicked] = useState([]);
+
+  const toggle = (cat) => setPicked((p) => (p.includes(cat) ? p.filter((x) => x !== cat) : [...p, cat]));
+
+  return (
+    <motion.div className="fixed inset-0 z-[90] flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+      <motion.div
+        role="dialog" aria-modal="true" aria-label="Join ImpactHub"
+        initial={{ opacity: 0, scale: 0.94, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-md rounded-3xl glass-strong p-7"
+        style={{ background: "var(--bg-1)", boxShadow: "var(--shadow)" }}
+      >
+        <div className="flex items-center justify-between">
+          <span className="grid h-10 w-10 place-items-center rounded-2xl grad-brand"><LogIn className="h-4 w-4" style={{ color: "var(--accent-ink)" }} /></span>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full glass hover:bg-[var(--surface-hover)]"><X className="h-4 w-4" /></button>
+        </div>
+        <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight">Create your profile</h3>
+        <p className="mt-1.5 text-sm text-[var(--text-1)]">No account, no password — just tell us who's showing up.</p>
+
+        <label className="mt-6 block text-xs font-medium text-[var(--text-2)]" htmlFor="join-name">Your name</label>
+        <input
+          id="join-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Sam Rivera"
+          className="mt-2 w-full rounded-2xl glass px-4 py-3 text-sm text-[var(--text-0)] placeholder:text-[var(--text-2)] focus:bg-[var(--surface-hover)]"
+        />
+
+        <div className="mt-5 text-xs font-medium text-[var(--text-2)]">Causes you care about</div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => toggle(cat)}
+              className={cx("rounded-full px-3.5 py-2 text-xs font-medium transition-colors", picked.includes(cat) ? "grad-brand" : "glass text-[var(--text-1)] hover:bg-[var(--surface-hover)]")}
+              style={picked.includes(cat) ? { color: "var(--accent-ink)" } : {}}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={() => onSubmit(name.trim() || "Explorer")}
+          className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition hover:brightness-110 active:scale-[0.98] grad-brand"
+          style={{ color: "var(--accent-ink)" }}
+        >
+          Get started <ArrowRight className="h-4 w-4" />
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ----------------------------- App ------------------------------ */
+
+function App() {
+  const [theme, setTheme] = useState("dark");
+  const [selected, setSelected] = useState(null);
+  const [joinedIds, setJoinedIds] = useState(() => new Set());
+  const [hoveredId, setHoveredId] = useState(null);
+  const [toasts, setToasts] = useState([]);
+  const [user, setUser] = useState({ name: "", joined: false });
+  const [showJoin, setShowJoin] = useState(false);
+  const [challenges, setChallenges] = useState(CHALLENGES);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", theme === "light");
+  }, [theme]);
+
+  const pushToast = useCallback((emoji, message) => {
+    const id = Math.random().toString(36).slice(2);
+    setToasts((t) => [...t, { id, emoji, message }]);
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3200);
+  }, []);
+
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const handleJoinChallenge = (challenge) => {
+    if (joinedIds.has(challenge.id)) return;
+    setJoinedIds((s) => new Set(s).add(challenge.id));
+    setChallenges((list) => list.map((c) => (c.id === challenge.id ? { ...c, participants: c.participants + 1 } : c)));
+    pushToast(challenge.emoji, "You joined " + challenge.title + ". First action unlocked.");
+    setSelected((sel) => (sel ? { ...sel, participants: sel.participants + 1 } : sel));
+  };
+
+  const handleStartImpact = () => {
+    if (!user.joined) setShowJoin(true);
+    else scrollTo("explore");
+  };
+
+  const handleJoinSubmit = (name) => {
+    setUser({ name, joined: true });
+    setShowJoin(false);
+    pushToast("🎉", "Welcome to ImpactHub, " + name + "!");
+    setTimeout(() => scrollTo("dashboard"), 300);
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Navbar theme={theme} onToggleTheme={() => setTheme((t) => (t === "dark" ? "light" : "dark"))} joined={user.joined} onJoinClick={() => (user.joined ? scrollTo("dashboard") : setShowJoin(true))} />
+
+      <Hero
+        onExplore={() => scrollTo("challenges")}
+        onStart={handleStartImpact}
+        challenges={challenges}
+        onPickChallenge={setSelected}
+        hoveredId={hoveredId}
+        setHoveredId={setHoveredId}
+      />
+
+      <StatsSection />
+      <TrendingSection challenges={challenges} onOpen={setSelected} joinedIds={joinedIds} />
+      <Explorer challenges={challenges} onOpen={setSelected} joinedIds={joinedIds} />
+      <LeaderboardSection />
+      <AchievementsSection />
+      <DashboardSection userName={user.joined ? user.name : "Explorer"} />
+      <AboutSection />
+      <FinalCTA onStart={handleStartImpact} />
+      <Footer />
+
+      <AnimatePresence>
+        {selected && (
+          <ChallengeModal
+            challenge={selected}
+            onClose={() => setSelected(null)}
+            joined={joinedIds.has(selected.id)}
+            onJoin={handleJoinChallenge}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showJoin && <JoinModal onClose={() => setShowJoin(false)} onSubmit={handleJoinSubmit} />}
+      </AnimatePresence>
+
+      <ToastStack toasts={toasts} remove={(id) => setToasts((t) => t.filter((x) => x.id !== id))} />
+    </div>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
