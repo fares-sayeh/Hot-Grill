@@ -1,8 +1,0 @@
-import { Icon } from '../components/Icon';
-import { getCapabilityReport, isStandalone } from '../services/capabilities';
-import { useMemo } from 'react';
-
-export function SettingsPage({ identity }: { identity: { id: string; name: string; createdAt: number } | null }) {
-  const capabilities = useMemo(() => getCapabilityReport(), []);
-  return <div className="page-grid settings-page"><section className="panel profile-card"><div className="profile-orb">{identity?.name.slice(0,1).toUpperCase() ?? 'N'}</div><div><p className="eyebrow">LOCAL IDENTITY</p><h1>{identity?.name ?? 'NEXUS user'}</h1><span className="mono">{identity?.id ?? 'NEX-LOCAL'}</span></div><span className="local-tag"><Icon name="shield" size={14}/> LOCAL ONLY</span></section><section className="panel"><div className="section-head"><div><p className="eyebrow">RUNTIME</p><h2>Browser capability report</h2></div><span className="platform">{isStandalone() ? 'PWA MODE' : 'BROWSER MODE'}</span></div><div className="cap-list">{Object.entries(capabilities).map(([key,value]) => <div className="cap-row" key={key}><span>{key.replace(/([A-Z])/g,' $1')}</span><strong className={value ? 'yes' : 'no'}>{value ? 'AVAILABLE' : 'NOT EXPOSED'}</strong></div>)}</div></section><section className="panel security"><div className="section-head"><div><p className="eyebrow">SECURITY NOTE</p><h2>Prototype boundary</h2></div><Icon name="shield" /></div><ul><li>Messages are stored in IndexedDB, not localStorage.</li><li>Message bodies are encrypted with browser-native AES-GCM before entering the outbox.</li><li>A relay route is simulated unless a real transport has been negotiated.</li><li>No account backend, analytics service, or paid API is required.</li></ul></section></div>;
-}
