@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyFlow</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#f5f7ff}
+.app{max-width:1050px;margin:auto;padding:28px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.logo{font-size:28px;font-weight:800}.logo span{color:#7c8cff}
+button{border:0;border-radius:12px;padding:11px 15px;background:#7c8cff;color:white;font-weight:700;cursor:pointer}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.card{background:#141b31;border:1px solid #252e49;border-radius:20px;padding:22px}
+h1{font-size:42px;margin:5px 0 10px} h2{margin-top:0}
+.muted{color:#9da7c2}
+.timer{text-align:center}.time{font-size:72px;font-weight:800;margin:25px 0}
+.row{display:flex;gap:10px;justify-content:center}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid #303b5d;background:#0d1427;color:white;margin:7px 0}
+.task{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #252e49}
+.task.done span{text-decoration:line-through;color:#747f9e}
+.task button{margin-left:auto;background:#283351;padding:7px 10px}
+.progress{height:10px;background:#27314d;border-radius:10px;overflow:hidden;margin:12px 0 20px}
+.bar{height:100%;background:#7c8cff;width:0;transition:.3s}
+.stat{display:flex;justify-content:space-between;margin:10px 0}
+@media(max-width:750px){.grid{grid-template-columns:1fr}h1{font-size:34px}.time{font-size:58px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">Study<span>Flow</span></div>
+  <button onclick="toggleTheme()">☀️ Theme</button>
+</header>
+
+<div class="grid">
+<section>
+<div class="card">
+<p class="muted">YOUR STUDY SPACE</p>
+<h1>Focus. Learn. Grow.</h1>
+<p class="muted">Organize your study sessions and keep your progress moving.</p>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h2>Tasks</h2>
+<input id="taskInput" placeholder="Add a study task..." onkeydown="if(event.key==='Enter')addTask()">
+<button onclick="addTask()">+ Add task</button>
+<div id="tasks"></div>
+</div>
+</section>
+
+<section>
+<div class="card timer">
+<h2>Pomodoro</h2>
+<p class="muted" id="mode">Focus session</p>
+<div class="time" id="time">25:00</div>
+<div class="row">
+<button onclick="startTimer()" id="start">Start</button>
+<button onclick="resetTimer()">Reset</button>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h2>Today's Progress</h2>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="stat"><span>Completed</span><strong id="count">0 / 0</strong></div>
+<div class="stat"><span>XP</span><strong id="xp">0 XP</strong></div>
+</div>
+</section>
+</div>
+</div>
+
+<script>
+let tasks=JSON.parse(localStorage.getItem('studyflow_tasks')||'[]');
+let xp=Number(localStorage.getItem('studyflow_xp')||0);
+let seconds=1500, running=false, interval;
+
+function save(){localStorage.setItem('studyflow_tasks',JSON.stringify(tasks));localStorage.setItem('studyflow_xp',xp)}
+function render(){
+ const box=document.getElementById('tasks'); box.innerHTML='';
+ tasks.forEach((t,i)=>{
+   const d=document.createElement('div'); d.className='task '+(t.done?'done':'');
+   d.innerHTML=`<input type="checkbox" ${t.done?'checked':''} style="width:auto" onchange="toggleTask(${i})"><span>${escapeHtml(t.text)}</span><button onclick="deleteTask(${i})">×</button>`;
+   box.appendChild(d);
+ });
+ const done=tasks.filter(t=>t.done).length;
+ document.getElementById('count').textContent=`${done} / ${tasks.length}`;
+ document.getElementById('bar').style.width=(tasks.length?done/tasks.length*100:0)+'%';
+ document.getElementById('xp').textContent=xp+' XP';
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addTask(){let x=document.getElementById('taskInput'),v=x.value.trim();if(!v)return;tasks.push({text:v,done:false});x.value='';save();render()}
+function toggleTask(i){tasks[i].done=!tasks[i].done;xp+=tasks[i].done?10:-10;if(xp<0)xp=0;save();render()}
+function deleteTask(i){tasks.splice(i,1);save();render()}
+function update(){let m=Math.floor(seconds/60),s=seconds%60;document.getElementById('time').textContent=`${m}:${String(s).padStart(2,'0')}`}
+function startTimer(){
+ if(running)return;running=true;document.getElementById('start').textContent='Running...';
+ interval=setInterval(()=>{seconds--;update();if(seconds<=0){clearInterval(interval);running=false;xp+=25;save();alert('Focus session complete! +25 XP 🎉');seconds=300;document.getElementById('mode').textContent='Break';document.getElementById('start').textContent='Start';update();render()}},1000)
+}
+function resetTimer(){clearInterval(interval);running=false;seconds=1500;document.getElementById('mode').textContent='Focus session';document.getElementById('start').textContent='Start';update()}
+function toggleTheme(){document.body.classList.toggle('light');document.body.style.background=document.body.classList.contains('light')?'#eef2ff':'#0b1020';document.body.style.color=document.body.classList.contains('light')?'#111827':'#f5f7ff'}
+render();update();
+</script>
+</body>
+</html>
